@@ -1,7 +1,6 @@
 import express from "express";
 import { loginController } from "./login.controller";
-//import * as bcrypt from "bcrypt";
-//import {Request,Response} from "express";
+import { validateUser } from "./login.middleware";
 
 export class loginRoute{
     app: express.Application;
@@ -11,12 +10,15 @@ export class loginRoute{
     constructor(app:express.Application){
         this.app = app;
         this.LoginController = new loginController();
+        this.validation = new validateUser;
     }
+    validation = new validateUser;
 
     configureRoutes(){
  // post generateOtp
     this.app.route("/api/generateOtp")
         .post(
+            this.validation.validateGenerateOtp,
             this.LoginController.generateOtpController
         );
 
@@ -24,6 +26,7 @@ export class loginRoute{
 
     this.app.route("/api/login")
         .post(
+            this.validation.validateLoginOtp,
             this.LoginController.loginController
         );
 
@@ -31,20 +34,15 @@ export class loginRoute{
 
     this.app.route("/api/Registration")
             .post(
+                this.validation.validateRegisterOtp,
                 this.LoginController.registrationController
             );
 // post VerifyOtp
     
     this.app.route("/api/VerifyOtp")
         .post(
+            this.validation.validateVerifyOtp,
             this.LoginController.verifyOtpController
         );
-
-// post sendOtp 
-
- /*   this.app.route("/api/sendOtp")
-        .post(
-            this.LoginController.sendOtpController
-        );   */  
 }
 }

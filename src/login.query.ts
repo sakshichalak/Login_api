@@ -53,26 +53,34 @@ function selectQueryGenerator(table:string,conditions:object,columns?:Array<stri
 
     for (const x in conditions) {
         if (i === 0) {
-            query += " WHERE";
+            query += " WHERE ";
         } 
         else {
-            query += " AND";
+            query += " AND ";
         }
 
         const result = conditions[x as keyof typeof conditions];
         if (typeof result === "string") {
             const c = result as unknown as string;
-            if(!c.includes("Now()")) {
-                query += ` '${x} = ${result}'`;
-            } 
+            if(c.includes("Now()") && !c.includes("lesserThan") && !c.includes("greaterThan")) {
+                query += ` ${x} = ${result}`;
+            } else if (c.includes("lesserThan")) {
+                query += `${x} <= ${c.substring(c.indexOf("(")+1, c.lastIndexOf(")"))}`;
+            } else if (c.includes("greaterThan")) {
+                query +=`${x} >= ${c.substring(c.indexOf("(")+1, c.lastIndexOf(")"))}`;
+            }
             else {
-                query += `${x} = ${result}`;
+                query += `${x} = '${result}'`;
             } 
         }
         else {
             query += `${x} = ${result}`;
-          }
+        }
+        i++;
     }
+    
+
+
   console.log(query);
   return query;
 }

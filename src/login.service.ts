@@ -1,14 +1,8 @@
-//import * as bcrypt from "bcrypt";
+
 import {user} from "./login.interface";
-//import nodemailer from "nodemailer";
 import { createdb,executeQuery } from "./login.connectionDB";
 import{InsertQueryGenerator,selectQueryGenerator} from "./login.query";
 import { comparePassword, hashPassword } from "./login.hash";
-//import {addMinutes} from "./login.helper";
-//import { Response } from "express";
-
-//const pool = createdb();
-
 
 export class loginService{
     
@@ -32,31 +26,6 @@ export class loginService{
         }
     };
 
-    /*sendOtp = async (newUser:user,email: string, otp: string,password:string): Promise<void> => {
-        const transporter = nodemailer.createTransport({
-            service: "gmail",
-            auth: {
-                user: email, 
-                pass: password
-            }
-        });
-
-        const mailOptions = {
-            from: email,   
-            to: newUser.email,
-            subject: "send otp to email",
-            text: `Your OTP is: ${otp}`
-        };
-
-        try {
-            await transporter.sendMail(mailOptions);
-            console.log("OTP sent successfully.");
-        } catch (error:unknown) {
-            const errorMsg = error as {message: string};
-            console.error("Error sending OTP:", errorMsg.message);
-            throw new Error("Failed to send OTP");
-        }
-    };*/
 
     saveOtp = async(email:string, otp:string):Promise<void> => {
         
@@ -82,7 +51,7 @@ export class loginService{
         {
             let isOtpValid = false;
             const connection = await createdb();
-            const query = selectQueryGenerator("otp",{email,otp});
+            const query = selectQueryGenerator("otp",{email,otp, expire: "lesserThan(Now())"});
             console.log(query);
             const result = await executeQuery(connection,query);
             console.log(result);
@@ -101,6 +70,10 @@ export class loginService{
 
     Registration = async(newUser:user): Promise<boolean> => {    
         try{
+            const userExists = await this.isExists(newUser.email);
+            if (userExists) {
+                throw new Error("User already exists");
+            }
             const connection = await createdb();
             const hashed = await hashPassword(newUser.password);
             console.log(hashed);
@@ -112,9 +85,6 @@ export class loginService{
         catch (error: unknown) {
             const errorMsg = error as {message: string};
             console.error("Error Register:", errorMsg.message);
-            if (errorMsg.message.includes("Duplicate entry")) {
-                throw new Error("User already exists");
-            }
             throw new Error("Failed to Register user");
         }
     };
@@ -154,4 +124,19 @@ export class loginService{
             throw new Error("Failed to login user");
         }
     }; 
-} 
+
+    isExists = async (email: string): Promise<boolean> => {
+        try {
+          const connection = await createdb();
+          const query = selectQueryGenerator("user", { email });
+          const result = await executeQuery(connection, query);
+          return result.length > 0;
+        } 
+        catch (error: unknown) {
+          const errorMsg = error as { message: string };
+          console.error("Error:", errorMsg.message);
+          throw new Error("Failed to check if user exists");
+        }
+    };
+}
+ 
