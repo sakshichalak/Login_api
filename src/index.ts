@@ -6,11 +6,6 @@ import { loginRoute } from "./routes";
 import { createdb } from "../src/connection/login.connectionDB";
 dotenv.config();  
 
-// if (!process.env.PORT) {
-//     console.log("port");
-//     process.exit(1);
-//  }
-
 const PORT: number = 3000;
 const app: express.Application = express();
 

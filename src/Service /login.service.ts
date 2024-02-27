@@ -93,64 +93,6 @@ export class loginService{
         }
     }
 
-
-    /*Registration = async(newUser:user,type:string): Promise<boolean> => {    
-        try{
-            const userExists = await this.isExists(newUser.email);
-            if (userExists) {
-                throw new Error("User already exists");
-            }
-            const connection = await createdb();
-            const hashed = await hashPassword(newUser.password);
-            console.log(hashed);
-            const query = InsertQueryGenerator("users", {firstname:newUser.firstName,lastname:newUser.lastName,email:newUser.email,Password:hashed});
-            await executeQuery(connection, query);
-            console.log("User registered successfully");
-            return true;
-        }
-        catch (error: unknown) {
-            const errorMsg = error as {message: string};
-            console.error("Error Register:", errorMsg.message);
-            throw new Error("Failed to Register user");
-        }
-    };
-
-    login = async (email:string,password:string,type:string): Promise<boolean> => {
-        try
-        {
-            let isUserValid = false;
-            const connection = await createdb();
-            const hashed  = await hashPassword(password);
-            console.log(hashed);
-            const query = selectQueryGenerator("users",{email});
-            console.log(query);
-
-            const result = await executeQuery(connection, query);
-            console.log(result);
-
-            if (result.length)
-            {
-                const response = result[0] as unknown as {password: string};
-                const storedHashedPassword = response.password;
-                console.log(storedHashedPassword);
-
-                const MatchPassword = await comparePassword(password, storedHashedPassword);
-                console.log(MatchPassword);
-                
-                if (MatchPassword)
-                {
-                    isUserValid = true;
-                }
-            }     
-            return isUserValid; 
-        }
-        catch (error: unknown) {
-            const errorMsg = error as {message: string};
-            console.error("Error login:", errorMsg.message);
-            throw new Error("Failed to login user");
-        }
-    }; */
-
     isExists = async (email: string): Promise<boolean> => {
         try {
           const connection = await createdb();

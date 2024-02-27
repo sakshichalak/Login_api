@@ -10,20 +10,32 @@ export class validateUser {
         }
     }
 
-    validateGenerateOtp(req:Request,res:Response,next:NextFunction){
-        const obj = req.body;
-        if(!obj.email){
-            return res.send("email not found");
+
+    validategetProfile(req:Request,res:Response,next:NextFunction){
+        const { userId } = req.body;
+
+        if (!userId) {
+            return res.status(400).json({ error: "User ID is required" });
         }
-        if(!obj.limit){
-            return res.send("limit not found");
+
+        next();
+    }
+
+    validateUpdateProfile(req:Request,res:Response,next:NextFunction){
+        const { firstName, lastName, email, password } = req.body;
+
+        if (!firstName || !lastName || !email || !password) {
+            return res.status(400).json({ error: "Missing required fields" });
         }
-        if(obj.limit == 4){
-            return res.send("limit is not correct");
+
+        if (!isValidEmail(email)) {
+            return res.status(400).json({ error: "Invalid email format" });
         }
-        if(!isValidEmail(obj.email)){
-            return res.send("Invalidate email format");     
+
+        if (!isValidPassword(password)) {
+            return res.status(400).json({ error: "Invalid password format" });
         }
+
         next();
     }
 
@@ -41,68 +53,29 @@ export class validateUser {
     }
 
 
-    /*validateRegisterOtp(req:Request,res:Response,next:NextFunction){
-        const obj = req.body;
-        if(!obj.firstName){
-            return res.send("firstName not found");
-        }
-        if(!obj.lastName){
-            return res.send("lastName not found");
-        }
-        if(!obj.email){
-            return res.send("email not found");
-        }
-        if(!obj.password){
-            return res.send("password not found");
-        }
-        if(!isValidEmail(obj.email)){
-            return res.send("Invalidate email format");
-        }
-        if(!isValidPassword(obj.password)){
-            return res.send("Invalidate password format");    
-        }
-        next();
-    }
-
-
-    validateLoginOtp(req:Request,res:Response,next:NextFunction){
-        const obj = req.body;
-        if(!obj.email){
-            return res.send("email not found");
-        }
-        if(!obj.password){
-            return res.send("password not found");
-        }
-        if(!isValidEmail(obj.email)){
-            return res.send("Invalidate email format");
-        }
-        if(!isValidPassword(obj.password)){
-            return res.send("Invalidate password format");    
-        }
-        next();    
-    }*/
     validateRegisterAndLogin(req: Request, res: Response, next: NextFunction) {
-        const obj = req.body;
-        if (!obj.email) {
-            return res.send("email not found");
+        const { type, email, password, firstName, lastName } = req.body;
+        if (type === 1) {
+            if (!email || !password || !firstName || !lastName) {
+                return res.status(400).send("Missing required fields for registration");
+            }
+            if (!isValidEmail(email)) {
+                return res.status(400).send("Invalid email format");
+            }
+            if (!isValidPassword(password)) {
+                return res.status(400).send("Invalid password format");
+            }
+        } else if (type === 2) {
+            if (!email || !password) {
+                return res.status(400).send("Missing required fields for login");
+            }
+            if (!isValidEmail(email)) {
+                return res.status(400).send("Invalid email format");
+            }
+        } else {
+            return res.status(400).send("Invalid request type");
         }
-
-        if (!isValidEmail(obj.email)) {
-            return res.send("Invalid email format");
-        }
-
-        if (!obj.password) {
-            return res.send("password not found");
-        }
-
-        if (!isValidPassword(obj.password)) {
-            return res.send("Invalid password format");
-        }
-
-        if (!obj.firstName && !obj.lastName) {
-            return res.send("firstName and lastName not found");
-        }
-
+    
         next();
     }
 

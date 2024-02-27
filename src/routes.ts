@@ -16,22 +16,12 @@ export class loginRoute{
 
     configureRoutes(){
 
-// post login 
 
     this.app.route("/api/RegisterAndlogin")
         .post(
-            //this.validation.validateRegisterAndLogin,
+            this.validation.validateRegisterAndLogin,
             this.LoginController.userController
         );
-
-/*// post Registration 
-
-    this.app.route("/api/Registration")
-            .post(
-                this.validation.validateRegisterOtp,
-                this.LoginController.registrationController
-            );*/
-// post VerifyOtp
     
     this.app.route("/api/VerifyOtp")
         .post(
@@ -42,20 +32,19 @@ export class loginRoute{
     
     this.app.route("/api/UpdateProfile/:id")
         .put(
-            //this.validation.,
+            this.validation.validateUpdateProfile,
             this.LoginController.updateProfileDetailsController
         );
 
      
     this.app.route("/api/getProfile")
         .get(
-            //this.validation.,
+            this.validation.validategetProfile,
             this.LoginController.getProfileDetailsController
         );
 
     this.app.route("/api/resendOtp")
         .post(
-            //this.validation.,
             this.LoginController.resendOtpController
         )
     }
