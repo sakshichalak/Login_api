@@ -1,23 +1,22 @@
 import * as dotenv from "dotenv";
 import express from "express";
-//import cors from "cors";  
+import cors from "cors";  
 import helmet from "helmet";
-//import mysql  from "mysql2";
 import { loginRoute } from "./routes";
-//import {route} from "./routes";
+import { createdb } from "../src/connection/login.connectionDB";
 dotenv.config();  
 
-if (!process.env.PORT) {
-    process.exit(1);
- }
+// if (!process.env.PORT) {
+//     console.log("port");
+//     process.exit(1);
+//  }
 
-const PORT: number = 5000;
+const PORT: number = 3000;
 const app: express.Application = express();
 
 app.use(helmet());
-//app.use(cors());
+app.use(cors());
 app.use(express.json());
-//app.use("/hash-password",route);
 
 
 const LoginRoute = new loginRoute(app);
@@ -29,3 +28,5 @@ console.log("PORT", PORT);
 app.listen(PORT ,() => {
     console.log(`Listening on port ${PORT}`);
 });
+
+createdb()

@@ -1,5 +1,5 @@
 import { NextFunction,Request,Response} from "express";
-import {isValidEmail,isValidPassword} from "./login.helper";
+import {isValidEmail,isValidPassword} from "../Helper /login.helper";
 
 export class validateUser {
     
@@ -34,9 +34,6 @@ export class validateUser {
         if(!obj.email){
             return res.send({message:"email not found"});
         }
-        if(!obj.otp){
-            return res.send({message:"otp not found"});
-        }
         if(!isValidEmail(obj.email)){
             return res.send("Invalidate email format");
         }
@@ -44,7 +41,7 @@ export class validateUser {
     }
 
 
-    validateRegisterOtp(req:Request,res:Response,next:NextFunction){
+    /*validateRegisterOtp(req:Request,res:Response,next:NextFunction){
         const obj = req.body;
         if(!obj.firstName){
             return res.send("firstName not found");
@@ -83,6 +80,30 @@ export class validateUser {
             return res.send("Invalidate password format");    
         }
         next();    
+    }*/
+    validateRegisterAndLogin(req: Request, res: Response, next: NextFunction) {
+        const obj = req.body;
+        if (!obj.email) {
+            return res.send("email not found");
+        }
+
+        if (!isValidEmail(obj.email)) {
+            return res.send("Invalid email format");
+        }
+
+        if (!obj.password) {
+            return res.send("password not found");
+        }
+
+        if (!isValidPassword(obj.password)) {
+            return res.send("Invalid password format");
+        }
+
+        if (!obj.firstName && !obj.lastName) {
+            return res.send("firstName and lastName not found");
+        }
+
+        next();
     }
 
 }

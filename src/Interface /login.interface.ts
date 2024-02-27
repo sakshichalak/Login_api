@@ -1,10 +1,12 @@
 interface user {
+    userId : number;
     firstName: string;
     lastName: string;
     email: string;
     password: string;
     otp: string;
-    expire: number;
+    expire: string;
     limit:number;
+    token :string;
 }
 export {user};

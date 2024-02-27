@@ -4,7 +4,7 @@ export function createdb() {
     const config = {
         host: "localhost",
         user: "root",
-        password: "sakshi@VMSDINO22",
+        password: "rootDb@123",
         database: "Logindatabase"
     };
     const pool = mysql.createPool(config);
