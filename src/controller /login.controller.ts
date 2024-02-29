@@ -1,5 +1,5 @@
 import {Request,Response} from "express";
-import { loginService} from "../Service /login.service";
+import { loginService} from "../service /login.service";
 import {user} from "../Interface /login.interface";
 
 export class loginController{
@@ -11,8 +11,8 @@ export class loginController{
 
     userController = async (req: Request, res: Response): Promise<void> => {
         try {
-            const { userId, email, password, firstName, lastName, type } = req.body;
-            const result = await this.LoginService.RegestrationLogin({ userId,email, password, firstName, lastName },type,email,password);
+            const { userId, email, password, firstName, lastName, imageUrl,type } = req.body;
+            const result = await this.LoginService.RegestrationLogin({ userId, email, password, firstName, lastName ,imageUrl},type,email,password);
             const Token = await this.LoginService.generateToken(userId)
             res.header('Authorization', Token);
             res.json({ message: result ? "User registered/login successfully" : "User not registered/login successfully" })
@@ -26,10 +26,9 @@ export class loginController{
 
     getProfileDetailsController = async (req: Request, res: Response): Promise<void> => {
         try {
-            const userId = req.body;
-            const result = await this.LoginService.getProfileDetails(userId);
-            res.status(200).json({message:"get profile Details suceessfully",result});
-
+            const result = await this.LoginService.getProfileDetails();
+            console.log(result);
+            res.status(200).json({message:"get profile Details suceessfully",result})
         }
         catch (error:unknown) {
             const errorMsg = error as {message: string};
@@ -60,7 +59,6 @@ export class loginController{
             if (otp) {
                 const result = await this.LoginService.verifyOtp(email, otp);
                 console.log(result);
-                let message = "";
                 if (result == true) {
                     res.json({message :"otp verified successfully"});
                 } else {

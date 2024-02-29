@@ -1,6 +1,6 @@
 import express from "express";
 import { loginController } from "../src/controller /login.controller";
-import { validateUser } from "../src/Middleware /login.middleware";
+import { validateUser } from "./middleware /login.middleware";
 
 export class loginRoute{
     app: express.Application;
@@ -10,41 +10,40 @@ export class loginRoute{
     constructor(app:express.Application){
         this.app = app; 
         this.LoginController = new loginController();
-        this.validation = new validateUser;
     }
-    validation = new validateUser;
 
     configureRoutes(){
 
 
     this.app.route("/api/RegisterAndlogin")
         .post(
-            this.validation.validateRegisterAndLogin,
+            validateUser.validateRegisterAndLogin,
             this.LoginController.userController
         );
     
     this.app.route("/api/VerifyOtp")
         .post(
-            this.validation.validateVerifyOtp,
+            validateUser.validateVerifyOtp,
             this.LoginController.verifyOtpController
         );
 
     
     this.app.route("/api/UpdateProfile/:id")
         .put(
-            this.validation.validateUpdateProfile,
+            validateUser.validateUpdateProfile,
             this.LoginController.updateProfileDetailsController
         );
 
      
     this.app.route("/api/getProfile")
         .get(
-            this.validation.validategetProfile,
+            //validateUser.validateGetProfile,
             this.LoginController.getProfileDetailsController
         );
 
     this.app.route("/api/resendOtp")
         .post(
+            validateUser.validateResendOtp,
             this.LoginController.resendOtpController
         )
     }

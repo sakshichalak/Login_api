@@ -8,7 +8,6 @@ export function createdb() {
         database: "Logindatabase"
     };
     const pool = mysql.createPool(config);
-    //console.log(pool);
     console.log("database pool connected ");
     return pool;
 }

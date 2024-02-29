@@ -1,8 +1,10 @@
 
 import {user} from "../Interface /login.interface";
 import { createdb,executeQuery } from "../connection/login.connectionDB";
-import{InsertQueryGenerator,selectQueryGenerator} from "../Helper /login.query";
-import { comparePassword, hashPassword } from "../Helper /login.hash";
+import{InsertQueryGenerator,selectQueryGenerator} from "../helper /login.query";
+import { comparePassword, hashPassword } from "../helper /login.hash";
+//import fs from 'fs';
+
 
 export class loginService{
     
@@ -107,7 +109,7 @@ export class loginService{
         }
     };
 
-    RegestrationLogin = async(newUser:{userId:string,email:string,password:string,firstName:string,lastName:string},type:string,email:string,password:string):Promise<any> => {
+    RegestrationLogin = async(newUser:{userId:string,email:string,password:string,firstName:string,lastName:string,imageUrl:string},type:string,email:string,password:string):Promise<any> => {
         try {
             if (type == "1") {
                 console.log("Registration Request");
@@ -118,7 +120,18 @@ export class loginService{
                 const connection = await createdb();
                 const hashed = await hashPassword(newUser.password);
                 console.log(hashed);
-                const query = InsertQueryGenerator("users", { userId: newUser.userId ,firstName: newUser.firstName, lastName: newUser.lastName, email: newUser.email, Password: hashed });
+
+                /*const base64Data = newUser.imageUrl.replace(/^data:image\/png;base64,/, ''); 
+                console.log(base64Data);
+
+                fs.writeFile('image.png', base64Data, 'base64', (err) => {
+                    if (err) {
+                        console.error(err);
+                        throw new Error("Error saving image");
+                    }
+                    console.log("Image uploaded successfully");
+                }); */
+                const query = InsertQueryGenerator("users", { userId: newUser.userId ,firstName: newUser.firstName, lastName: newUser.lastName, email: newUser.email, Password: hashed, imageUrl:newUser.imageUrl});
                 await executeQuery(connection, query);
                 console.log("User registered successfully");
                 return true;
@@ -166,21 +179,22 @@ export class loginService{
         Expiry.setDate(Expiry.getDate() + 1); 
 
         const TOKEN = UserId + currentDate + Expiry;
-        const query = InsertQueryGenerator("Auth",{UserId,TOKEN,Expiry:'ADDTIME(Now(), "00:3:00.000000")'})
+        const query = InsertQueryGenerator("auth",{UserId,TOKEN,Expiry:'ADDTIME(Now(), "00:3:00.000000")'})
         await executeQuery(connection, query);
         console.log(query);
     
         return `${UserId} ${TOKEN} ${Expiry.toISOString()}`;
     }
 
-    getProfileDetails = async(userId:number):Promise<any> => {
+    getProfileDetails = async():Promise<any> => {
         try{
         const connection = await createdb();
-        const query =  `SELECT users.userId, users.firstName, Auth.token
+        const query =  `SELECT users.userId, users.firstName, users.imageUrl, auth.token
                         FROM users
-                        INNER JOIN Auth ON users.userId = Auth.userId`;
+                        INNER JOIN auth ON users.userId = auth.userId `;
         const result = await executeQuery(connection, query);
         console.log(result);
+        return result;
         }
         catch (error: unknown) {
             const errorMsg = error as { message: string };
@@ -198,7 +212,8 @@ export class loginService{
         firstName = '${newUser.firstName}',
         lastName = '${newUser.lastName}',
         email = '${newUser.email}',
-        password = '${password}'
+        password = '${password}',
+        imageUrl = '${newUser.imageUrl}'
         WHERE UserId = ${userId}`;
         const result = await executeQuery(connection,query);
         console.log(result);

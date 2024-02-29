@@ -8,5 +8,7 @@ interface user {
     expire: string;
     limit:number;
     token :string;
+    imageUrl:string,
+    imageData:string
 }
 export {user};
