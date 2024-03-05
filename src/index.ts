@@ -1,29 +1,22 @@
 import * as dotenv from "dotenv";
-import express from "express";
-//import cors from "cors";  
+import express from "express"; 
 import helmet from "helmet";
-//import mysql  from "mysql2";
-import { loginRoute } from "./routes";
-//import {route} from "./routes";
-dotenv.config();  
 
-if (!process.env.PORT) {
-    process.exit(1);
- }
+dotenv.config();   
+import { Aerospike_route } from "./aerospike_route";
 
-const PORT: number = 5000;
+
+
+const PORT: number = 8000;
 const app: express.Application = express();
 
+
 app.use(helmet());
-//app.use(cors());
 app.use(express.json());
-//app.use("/hash-password",route);
 
 
-const LoginRoute = new loginRoute(app);
-LoginRoute.configureRoutes();
-
-
+const aerospike_route = new Aerospike_route(app);
+aerospike_route.configureRoutes();
 
 console.log("PORT", PORT);
 app.listen(PORT ,() => {
